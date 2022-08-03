@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'helpers/theme.dart';
 import 'pages/home_page.dart';
 
 Future<void> main() async {
@@ -30,12 +31,22 @@ class _AppState extends State<App> {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => ChangeThemeCubit(),
-      child: MaterialApp(
-        title: 'Flutter Demo',
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
-        ),
-        home: const MyHomePage(),
+      child: BlocBuilder<ChangeThemeCubit, ChangeThemeState>(
+        builder: (context, ChangeThemeState themeState) {
+          return MaterialApp(
+            darkTheme: (themeState is ThemeAutoState)
+                ? buildThemeData(myThemes[1])
+                : (themeState is ThemeLightState)
+                ? buildThemeData(myThemes[0])
+                : buildThemeData(myThemes[1]),
+            theme: (themeState is ThemeAutoState)
+                ? buildThemeData(myThemes[0])
+                : (themeState is ThemeLightState)
+                ? buildThemeData(myThemes[0])
+                : buildThemeData(myThemes[1]),
+            home: const MyHomePage(),
+          );
+        },
       ),
     );
   }
